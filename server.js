@@ -53,7 +53,7 @@ router.post('/signup', function(req, res) {
         user.save(function(err){
             if (err) {
                 if (err.code == 11000)
-                    return res.json({ success: false, message: 'A user with that username already exists.'});
+                    return res.json({ success: false, message: 'movie name already exists.'});
                 else
                     return res.json(err);
             }
@@ -85,6 +85,190 @@ router.post('/signin', function (req, res) {
         })
     })
 });
+
+router.route('/movies')
+    .post(function(req, res) {
+            if (!req.body.title || !req.body.year || !req.body.genre || !req.body.cast) {
+                res.json({success: false, msg: 'Please include all data.'});
+                return;
+            }
+
+            var new_movie = new Movie();
+
+            new_movie.title = req.body.title;
+            new_movie.year = req.body.year;
+            new_movie.genre = req.body.genre;
+            new_movie.cast = req.body.cast;
+
+            new_movie.save(function(err){
+                if (err) {
+                    if (err.code == 11000)
+                        return res.json({ success: false, message: 'movie name already exists.'});
+                    else
+                        return res.json(err);
+                }
+
+                res.json({success: true, msg: 'Successfully created new movie.'})
+            });
+        }
+    )
+    .get(function(req, res) {
+            console.log(req.body);
+            
+
+            let id = " ";
+            if (req.body.movie) {
+                id = req.body.movie;
+            }
+            if (req.headers.movie) {
+                id = req.headers.movie;
+            }
+
+            if (req.headers.movie) {
+                Movie.findOne({ title: id }).select('title year genre cast').exec(function(err, movie) {
+                    
+                    if (movie) {
+                        Review.findOne({ movie: id }).select('reviewer_name rating movie review').exec(function(err, review) {
+                            if(review) {
+                                //var review_json = JSON.stringify(review);
+                                res.json({status: 200, success: true, movies: movie, reviews: review});
+                            } else {
+                                return res.json({ success: true, movies: movie});
+                            }
+                        });
+                    } else {
+                        return res.json({ success: false, message: 'movie is not in database.'});
+                    }
+                })
+            }
+            else if (!req.body) {
+                Movie.find(function (err, movies) {
+                    if (err) res.send(err);
+                    return res.json({status:200, success: true, size: movies.length, movies: movies});
+                });
+            }
+            else if (!req.body.movie) {
+                Movie.find(function (err, movies) {
+                    if (err) res.send(err);
+                    return res.json({status:200, success: true, size: movies.length, movies: movies});
+                });
+            } else if (req.body.movie && !req.body.reviews) {
+                Movie.findOne({ title: id }).select('title year genre cast').exec(function(err, movie) {
+                    
+                    if (movie) {
+                        return res.json({ success: true, movies: movie});
+                    } else {
+                        return res.json({ success: false, message: 'movie is not in database.'});
+                    }
+                })
+            } else if (req.body.movie && req.body.reviews == false) {
+                Movie.findOne({ title: id }).select('title year genre cast').exec(function(err, movie) {
+                    
+                    if (movie) {
+                        return res.json({ success: true, movies: movie});
+                    } else {
+                        return res.json({ success: false, message: 'movie is not in database.'});
+                    }
+                })
+            } else if (req.body.movie && req.body.reviews == true) {
+                Movie.findOne({ title: id }).select('title year genre cast').exec(function(err, movie) {
+                    
+                    if (movie) {
+                        Review.findOne({ movie: id }).select('reviewer_name rating movie review').exec(function(err, review) {
+                            if(review) {
+                                //var review_json = JSON.stringify(review);
+                                res.json({status: 200, success: true, movies: movie, reviews: review});
+                            } else {
+                                return res.json({ success: true, movies: movie});
+                            }
+                        });
+                    } else {
+                        return res.json({ success: false, message: 'movie is not in database.'});
+                    }
+                })
+            }
+        }
+    )
+    .put(function(req, res) {
+            
+            
+            console.log(req.body);
+
+            let id = req.body.id;
+            Movie.findOne({ title: id }).select('title year genre cast').exec(function(err, movie) {
+                
+                if (err) {
+                    if (err.kind === "ObjectId") {
+                        res.status(404).json({
+                            success: false,
+                            message: `Movie with id: ${id} not found in the database!`
+                        }).send();
+                    } else {
+                        res.send(err);
+                    }
+                } else if (movie) {
+                    if (req.body.title) {
+                        movie.title = req.body.title;
+                    }
+                    if (req.body.year) {
+                        movie.year = req.body.year;
+                    }
+                    if (req.body.genre) {
+                        movie.genre = req.body.genre;
+                    }
+                    if (req.body.cast) {
+                        movie.cast = req.body.cast;
+                    }
+                    movie.save(function (err) {
+                        if (err) res.send(err);
+
+                        res.status(200).json({
+                            success: true,
+                            message: 'Movie succesfully updated!'
+                        });
+                    });
+                }
+            })
+        }
+    )
+    .delete(function(req, res) {
+       
+    
+            console.log(req.body);
+
+            let id = req.body.id;
+            Movie.findOne({ title: id }).select('_id title year genre cast').exec(function(err, movie) {
+                if (err) {
+                    if (err.kind === "ObjectId") {
+                        res.status(404).json({
+                            success: false,
+                            message: `Movie with id: ${id} not found in the database!`
+                        }).send();
+                    } else {
+                        res.send(err);
+                    }
+                } else if (movie) {
+                    Movie.remove({_id: movie._id}, function(err, movie) {
+                        if (err) {
+                            if (err.kind === "ObjectId") {
+                                res.status(404).json({
+                                    success: false,
+                                    message: `Movie with id: ${id} not found in the database!`
+                                }).send();
+                            } else {
+                                res.send(err);
+                            }
+                        } else {
+                            res.status(200).json({
+                                success: true,
+                                message: 'Successfully deleted'
+                            })
+                        }
+                    });
+                }
+            })
+        }
+    );
 
 app.use('/', router);
 app.listen(process.env.PORT || 8080);
