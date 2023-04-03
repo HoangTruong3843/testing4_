@@ -13,7 +13,9 @@ var jwt = require('jsonwebtoken');
 var cors = require('cors');
 var User = require('./Users');
 var Movie = require('./Movies');
-
+//////////////////NEW
+var Review = require('./Reviews');
+/////////////////
 var app = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -92,9 +94,7 @@ router.route('/movies')
                 res.json({success: false, msg: 'Please include all data.'});
                 return;
             }
-
             var new_movie = new Movie();
-
             new_movie.title = req.body.title;
             new_movie.year = req.body.year;
             new_movie.genre = req.body.genre;
@@ -269,7 +269,76 @@ router.route('/movies')
             })
         }
     );
+//////////NEW
+router.route('/reviews')
+    .post(function(req, res) {
+            if (!req.body.movieID || !req.body.username || !req.body.review || !req.body.rating) {
+                res.json({success: false, msg: 'Please include all review data.'});
+                return;
+            }
 
+            var new_review = new Review();
+            new_review.movieID = req.body.movieID;
+            new_review.username = req.body.username;
+            new_review.review = req.body.review;
+            new_review.rating = req.body.rating;
+
+            let id = req.body.movie;
+
+            ///////////////////////
+            Movie.findOne({ title: id }).select('_id title year genre cast').exec(function(err, movie) {
+                if (err) {
+                    if (err.kind === "ObjectId") {
+                        res.status(404).json({
+                            success: false,
+                            message: `Movie with id: ${id} not found in the database!`
+                        }).send();
+                    } else {
+                        res.send(err);
+                    }
+                } else if (movie) {
+                    Movie.save(function(err) {
+                        if (err) {
+                            if (err.code == 11000)
+                                return res.json({ success: false, message: 'review already exists.'});
+                            else
+                                return res.json(err);
+                        }
+
+                        res.json({success: true, msg: 'Successfully created new review.'})
+                    });
+                }
+            })
+        }
+    )
+    .get(function(req, res) {
+            console.log(req.body);
+            if (!req.body.id) {
+                res.json({success: false, msg: 'Please include all data.'});
+                return;
+            }
+
+            let id = req.body.id;
+            ///////////////////////
+            Movie.findOne({ title: id }).select('_id title year genre cast').exec(function(err, movie) {
+                if (!movie) {
+                    return res.json({success:false, message:'Movie does not exist.'});
+                }
+                else {
+                    Review.findOne({movie: id}).select('reviewer_name rating movie review').exec(function(err,review) {
+                        if (review) {
+                            res.json({status:200, success: true, reviews: review});
+                        }
+                        else{
+                            res.json({status:false, message:'Review is not available'});
+                        }
+                    });
+                }
+            })
+        }
+    );
+
+/////////
 app.use('/', router);
 app.listen(process.env.PORT || 8080);
 module.exports = app; // for testing only
