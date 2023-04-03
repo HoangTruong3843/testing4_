@@ -288,14 +288,7 @@ router.route('/reviews')
             ///////////////////////
             Movie.findOne({ title: id }).select('_id title year genre cast').exec(function(err, movie) {
                 if (!movie) {
-                    if (movie.kind === "ObjectId") {
-                        res.status(404).json({
-                            success: false,
-                            message: `Movie with id: ${id} not found in the database!`
-                        }).send();
-                    } else {
-                        res.send(err);
-                    }
+                    res.json({success: false, msg: 'Movie does not exist.'})
                 } else if (movie) {
                     new_review.save(function(err) {
                         if (err) {
