@@ -283,7 +283,7 @@ router.route('/reviews')
             new_review.review = req.body.review;
             new_review.rating = req.body.rating;
 
-            let id = req.body.movie;
+            let id = req.body.movieID;
 
             ///////////////////////
             Movie.findOne({ title: id }).select('_id title year genre cast').exec(function(err, movie) {
@@ -297,7 +297,7 @@ router.route('/reviews')
                         res.send(err);
                     }
                 } else if (movie) {
-                    Movie.save(function(err) {
+                    new_review.save(function(err) {
                         if (err) {
                             if (err.code == 11000)
                                 return res.json({ success: false, message: 'review already exists.'});
