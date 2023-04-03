@@ -317,7 +317,7 @@ router.route('/reviews')
                     return res.json({success:false, message:'Movie does not exist.'});
                 }
                 else {
-                    Review.findOne({movie: id}).select('reviewer_name rating movie review').exec(function(err,review) {
+                    Review.findOne({movieID: id}).select('reviewer_name rating movie review').exec(function(err,review) {
                         if (review) {
                             res.json({status:200, success: true, reviews: review});
                         }
