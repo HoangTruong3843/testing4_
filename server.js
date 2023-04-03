@@ -116,6 +116,7 @@ router.route('/movies')
             
 
             let id = " ";
+            let review_id = req.body.reviews;
             if (req.body.movie) {
                 id = req.body.movie;
             }
@@ -125,9 +126,10 @@ router.route('/movies')
 
             if (req.headers.movie) {
                 Movie.findOne({ title: id }).select('title year genre cast').exec(function(err, movie) {
-                    
+
                     if (movie) {
-                        Review.findOne({ movie: id }).select('reviewer_name rating movie review').exec(function(err, review) {
+
+                        Review.findOne({ movieID: id }).select('username rating movieID review').exec(function(err, review) {
                             if(review) {
                                 //var review_json = JSON.stringify(review);
                                 res.json({status: 200, success: true, movies: movie, reviews: review});
@@ -151,7 +153,8 @@ router.route('/movies')
                     if (err) res.send(err);
                     return res.json({status:200, success: true, size: movies.length, movies: movies});
                 });
-            } else if (req.body.movie && !req.body.reviews) {
+            }
+            else if (req.body.movie && !req.body.reviews) {
                 Movie.findOne({ title: id }).select('title year genre cast').exec(function(err, movie) {
                     
                     if (movie) {
@@ -173,7 +176,7 @@ router.route('/movies')
                 Movie.findOne({ title: id }).select('title year genre cast').exec(function(err, movie) {
                     
                     if (movie) {
-                        Review.findOne({ movie: id }).select('reviewer_name rating movie review').exec(function(err, review) {
+                        Review.findOne({ movieID: id }).select('username rating movieID review').exec(function(err, review) {
                             if(review) {
                                 //var review_json = JSON.stringify(review);
                                 res.json({status: 200, success: true, movies: movie, reviews: review});
