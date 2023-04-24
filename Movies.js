@@ -22,7 +22,7 @@ var MovieSchema  = new Schema({
 });
 
 
-MovieSchema.pre('save', function(next) {
+/*MovieSchema.pre('save', function(next) {
     var movie = this;
 
     if (movie.Actors.length < 3) {
@@ -32,7 +32,7 @@ MovieSchema.pre('save', function(next) {
     } else {
         next();
     }
-});
+});*/
 /*{
         if(req.body.Actors.length < 3){
             res.status(400).json({message: "Need at least 3 actors"});
