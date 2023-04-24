@@ -21,11 +21,11 @@ var MovieSchema  = new Schema({
     averageRating: {type:Number, required: false}
 });
 
-/*
+
 MovieSchema.pre('save', function(next) {
     var movie = this;
 
-    if (movie.cast.length < 3) {
+    if (movie.Actors.length < 3) {
         var err = new ValidationError(this);
         err.errors.movie = new ValidatorError('need 3 or more actors in cast');
         next(err);
@@ -33,6 +33,36 @@ MovieSchema.pre('save', function(next) {
         next();
     }
 });
-*/
+/*{
+        if(req.body.Actors.length < 3){
+            res.status(400).json({message: "Need at least 3 actors"});
+        }else {
+            Movie.find({Title: req.body.Title}, function (err, data) {
+                if (err) {
+                    res.status(400).json({message: "Invalid query"});
+                } else if (data.length == 0) {
+                    let mov = new Movie({
+                        Title: req.body.Title,
+                        Year: req.body.Year,
+                        Genre: req.body.Genre,
+                        Actors: req.body.Actors,
+                        ImageUrl: req.body.ImageUrl
+                    });
+                    console.log(req.body);
+                    mov.save(function (err) {
+                        if (err) {
+                            res.json({message: err});
+                        } else {
+                            res.json({msg: "Successfully saved"});
+                        }
+
+                    });
+                } else {
+                    res.json({message: "Movie already exists"});
+                }
+
+            });
+        }
+    }*/
 //return the model to server
 module.exports = mongoose.model('Movie', MovieSchema);

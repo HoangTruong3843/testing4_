@@ -103,10 +103,7 @@ router.route('/movies')
                         Actors: req.body.Actors,
                         ImageUrl: req.body.ImageUrl
                     });
-
                     console.log(req.body);
-
-
                     mov.save(function (err) {
                         if (err) {
                             res.json({message: err});
