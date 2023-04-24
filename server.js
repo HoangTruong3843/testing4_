@@ -97,25 +97,32 @@ router.route('/movies')
                 res.json({success: false, msg: 'Please include all data.'});
                 return;
             }
-            var new_movie = new Movie({
-                Title:req.body.Title,
-                Year:req.body.Year,
-                Genre:req.body.Genre,
-                Actors:req.body.Actors,
-                ImageUrl:req.body.ImageUrl,
-                averageRating:req.body.averageRating});
+            else {
+                Movie.find ({Title: req.body.Title},function(err,data) {
+                        if (err) {
+                            res.status(400).json({message: "Invalid query"});
+                        } else if (data.length == 0) {
+                            let mov = new Movie({
+                                Title: req.body.Title,
+                                Year: req.body.Year,
+                                Genre: req.body.Genre,
+                                Actors: req.body.Actors,
+                                ImageUrl: req.body.ImageUrl
+                            });
+                            console.log(req.body);
+                            mov.save(function (err) {
+                                if (err) {
+                                    res.json({message: err});
+                                } else {
+                                    res.json({msg: "Successfully saved"});
+                                }
+                            });
+                        } else {
+                            res.json({msg: "Movie already exists"});
+                        }
+                    });
+            }})
 
-            console.log(req.body);
-            new_movie.save(function(err){
-                if (err) {
-                    if (err.code == 11000)
-                        return res.json({ success: false, message: 'movie name already exists.'});
-                    else
-                        return res.json(err);
-                }
-                res.json({success: true, msg: 'Successfully created new movie.'})
-            });
-        }
         /*{
         if(req.body.Actors.length < 3){
             res.status(400).json({message: "Need at least 3 actors"});
@@ -145,7 +152,7 @@ router.route('/movies')
             });
         }
     }*/
-    )
+
     .get(authJwtController.isAuthenticated, function (req, res) {
         if(req.query.movieId != null){
             Movie.find({_id: mongoose.Types.ObjectId(req.query.movieId)}, function(err, data){
