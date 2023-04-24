@@ -90,18 +90,21 @@ router.post('/signin', function (req, res) {
 router.route('/movies')
     .post(authJwtController.isAuthenticated, function (req, res) {
             if (!req.body.Title || !req.body.Year || !req.body.Genre || !req.body.Actors) {
-                if (!req.body.Actors.length < 3)
-                    res.status(400).json({message: "Need at least 3 actors"});
+                if (!req.body.Actors.length < 3){
+                    res.status(400).json({message: "Need at least 3 actors"})
+                    return;
+                }
                 res.json({success: false, msg: 'Please include all data.'});
                 return;
             }
-            var new_movie = new Movie();
-            new_movie.Title = req.body.Title;
-            new_movie.Year = req.body.Year;
-            new_movie.Genre = req.body.Genre;
-            new_movie.Actors = req.body.Actors;
-            new_movie.ImageUrl = req.body.ImageUrl;
-            new_movie.averageRating = req.body.averageRating;
+            var new_movie = new Movie({
+                Title:req.body.Title,
+                Year:req.body.Year,
+                Genre:req.body.Genre,
+                Actors:req.body.Actors,
+                ImageUrl:req.body.ImageUrl,
+                averageRating:req.body.averageRating});
+
             console.log(req.body);
             new_movie.save(function(err){
                 if (err) {
@@ -110,7 +113,6 @@ router.route('/movies')
                     else
                         return res.json(err);
                 }
-
                 res.json({success: true, msg: 'Successfully created new movie.'})
             });
         }
