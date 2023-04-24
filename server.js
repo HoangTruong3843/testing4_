@@ -255,6 +255,33 @@ router.route('/movies')
         });
     });
 //////////NEW
+router.route('/movies/:movieId')
+    .get(authJwtController.isAuthenticated, function (req, res) {
+        var id = mongoose.Types.ObjectId(req.query.movieId);
+        if (req.query.reviews == "true") {
+            // If reviews query parameter is "true", include movie information and reviews
+            Movie.aggregate([
+                { $match: { '_id': mongoose.Types.ObjectId(req.query.movieId)} },
+                { $lookup: { from: "reviews", localField: "_id", foreignField: "Movie_ID", as: "Reviews" } },
+                { $sort: { "reviews.createdAt": -1 } }
+            ], function (err, movie) {
+                if (err) {
+                    return res.status(400).json({ success: false, message: "Error retrieving movie and reviews." });
+                } else {
+                    return res.status(200).json({ success: true, movie: movie[0] });
+                }
+            });
+        } else {
+            // If reviews query parameter is not provided or is not "true", only include movie information
+            Movie.findById(id, function (err, movie) {
+                if (err) {
+                    return res.status(400).json({ success: false, message: "Error retrieving movie." });
+                } else {
+                    return res.status(200).json({ success: true, movie: movie });
+                }
+            });
+        }
+    });
 router.route('/reviews')
     .post(authJwtController.isAuthenticated, function(req,res){
 
