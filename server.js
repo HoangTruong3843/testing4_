@@ -255,6 +255,7 @@ router.route('/movies')
         });
     });
 //////////NEW
+var mongoose = require('mongoose');
 router.route('/movies/:movieId')
     .get(authJwtController.isAuthenticated, function (req, res) {
         var id = mongoose.Types.ObjectId(req.query.movieId);
