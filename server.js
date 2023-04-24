@@ -88,7 +88,7 @@ router.post('/signin', function (req, res) {
 });
 
 router.route('/movies')
-    .post(authJwtController.isAuthenticated, function (req, res) {
+    .post(authJwtController.isAuthenticated, function (req, res) /*{
             if (!req.body.Title || !req.body.Year || !req.body.Genre || !req.body.Actors) {
                 if (!req.body.Actors.length < 3){
                     res.status(400).json({message: "Need at least 3 actors"})
@@ -121,9 +121,9 @@ router.route('/movies')
                             res.json({msg: "Movie already exists"});
                         }
                     });
-            }})
+            }})*/
 
-        /*{
+        {
         if(req.body.Actors.length < 3){
             res.status(400).json({message: "Need at least 3 actors"});
         }else {
@@ -151,7 +151,7 @@ router.route('/movies')
                 }
             });
         }
-    }*/
+    })
 
     .get(authJwtController.isAuthenticated, function (req, res) {
         if(req.query.movieId != null){
