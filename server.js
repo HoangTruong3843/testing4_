@@ -152,7 +152,6 @@ router.route('/movies')
             });
         }
     })
-
     .get(authJwtController.isAuthenticated, function (req, res) {
         if(req.query.movieId != null){
             Movie.find({_id: mongoose.Types.ObjectId(req.query.movieId)}, function(err, data){
@@ -290,7 +289,7 @@ router.route('/reviews')
         const token = usertoken.split(' ');
         const decoded = jwt.verify(token[1], process.env.SECRET_KEY);
 
-        Movie.find({_id: req.body.Movie_ID}, function(err, data){
+        Movie.find({_id: req.body.movieID}, function(err, data){
             if(err){
                 res.status(400).json({message: "Invalid query"});
             }else if (data != null){
@@ -298,7 +297,7 @@ router.route('/reviews')
                     Name: decoded.username,
                     Review: req.body.Review,
                     Rating: req.body.Rating,
-                    Movie_ID: req.body.Movie_ID
+                    Movie_ID: req.body.movieID
                 });
 
                 console.log(req.body);
