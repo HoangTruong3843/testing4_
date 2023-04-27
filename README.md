@@ -40,4 +40,3 @@ The purpose of this assignment is to create a React Single Page App over your de
 
 ## Submission here:
 - REACT link: https://csc3916-react-lb5a.onrender.com/#/
-- Postman with environment HoangHW4: [![Run in Postman](https://run.pstmn.io/button.svg)](https://god.gw.postman.com/run-collection/25408747-b993893d-6e76-4635-a1ba-a975b42a8572?action=collection%2Ffork&collection-url=entityId%3D25408747-b993893d-6e76-4635-a1ba-a975b42a8572%26entityType%3Dcollection%26workspaceId%3Dd2328d7b-a58a-4caa-ab2d-1652f5271bd1#?env%5BHoangHW4%5D=W3sia2V5IjoiSldUIiwidmFsdWUiOiIiLCJlbmFibGVkIjp0cnVlLCJ0eXBlIjoiYW55Iiwic2Vzc2lvblZhbHVlIjoiSldULi4uIiwic2Vzc2lvbkluZGV4IjowfSx7ImtleSI6IkltYWdlVVJsIiwidmFsdWUiOiIiLCJlbmFibGVkIjp0cnVlLCJ0eXBlIjoiZGVmYXVsdCIsInNlc3Npb25WYWx1ZSI6IiIsInNlc3Npb25JbmRleCI6MX1d)
